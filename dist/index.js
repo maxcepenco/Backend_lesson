@@ -3,9 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.app = void 0;
 const express_1 = __importDefault(require("express"));
-const app = (0, express_1.default)();
-const port = 3000;
+//create express app
+exports.app = (0, express_1.default)();
 const HTTP_STATUS = {
     OK_200: 200,
     CREATED_201: 201,
@@ -14,7 +15,7 @@ const HTTP_STATUS = {
     NOT_FOUND_404: 404,
 };
 const jsonBodyMiddleware = express_1.default.json();
-app.use(jsonBodyMiddleware);
+exports.app.use(jsonBodyMiddleware);
 const db = {
     courses: [
         { id: 1, title: 'front-end' },
@@ -23,14 +24,14 @@ const db = {
         { id: 4, title: 'devops' }
     ]
 };
-app.get('/courses', (req, res) => {
+exports.app.get('/courses', (req, res) => {
     let foundCourses = db.courses;
     if (req.query.title) {
         foundCourses = foundCourses.filter(c => c.title.indexOf(req.query.title) > -1);
     }
     res.json(foundCourses);
 });
-app.get('/courses/:id', (req, res) => {
+exports.app.get('/courses/:id', (req, res) => {
     const foundCourse = db.courses.find(c => c.id === +req.params.id);
     if (!foundCourse) {
         res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
@@ -38,7 +39,7 @@ app.get('/courses/:id', (req, res) => {
     }
     res.json(foundCourse);
 });
-app.delete('/courses/:id', (req, res) => {
+exports.app.delete('/courses/:id', (req, res) => {
     const idToDelete = +req.params.id;
     const found = db.courses.some(c => c.id === idToDelete);
     if (!found) {
@@ -48,7 +49,7 @@ app.delete('/courses/:id', (req, res) => {
     db.courses = db.courses.filter(c => c.id !== +req.params.id);
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
 });
-app.post('/courses', (req, res) => {
+exports.app.post('/courses', (req, res) => {
     if (!req.body.title) {
         res.sendStatus(400);
         return;
@@ -61,7 +62,7 @@ app.post('/courses', (req, res) => {
     res.status(201);
     res.json(newCourse);
 });
-app.post('/', (req, res) => {
+exports.app.post('/', (req, res) => {
     if (!req.body.title) {
         res.sendStatus(400);
         return;
@@ -74,6 +75,6 @@ app.post('/', (req, res) => {
     res.status(201);
     res.json(newCourse);
 });
-app.listen(3000, () => {
+exports.app.listen(3000, () => {
     console.log('Server started on port 3000');
 });
